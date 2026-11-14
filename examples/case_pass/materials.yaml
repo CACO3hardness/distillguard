@@ -1,0 +1,19 @@
+version: 1
+materials:
+  - id: M01
+    path: 离职交接流程SOP.md
+    type: process_doc
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false
+
+  - id: M02
+    path: 岗位说明书_后端开发.md
+    type: public
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false

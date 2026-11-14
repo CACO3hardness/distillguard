@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+
+# 运行时产物含本机绝对路径，不入库
+examples/*/run/
+examples/*/skill_package/
+examples/*/handoff/
+examples/*/gate_test/
+*.locked-*
+
+.DS_Store
+Thumbs.db

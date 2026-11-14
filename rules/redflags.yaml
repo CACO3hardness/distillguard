@@ -1,0 +1,75 @@
+version: 1
+# 合规表演的红旗。出现在报告里，也出现在工具的审核输出里。
+# 依据：研究报告第五章对"清单被形式化"的自我批判。
+flags:
+  - id: RF-01
+    severity: high
+    label: 概括性授权
+    trigger: blanket_phrase_hit
+    message: 同意文本含概括表述，实质授权范围无法确定。
+
+  - id: RF-02
+    severity: high
+    label: 同意在压力峰值取得
+    trigger: consent_at_exit_process
+    message: 同意在离职谈判或离职证明办理期间签署，拒绝的代价处于最高点。
+
+  - id: RF-03
+    severity: high
+    label: 无退出机制
+    trigger: not_revocable
+    message: 当事人无法要求停止调用，越界后只能被动应对。
+
+  - id: RF-04
+    severity: high
+    label: 无到期时间
+    trigger: no_expiry
+    message: 授权无限期，与劳动关系有终点这一事实不匹配。
+
+  - id: RF-05
+    severity: high
+    label: 第三人信息未隔离
+    trigger: third_party_present
+    message: 材料含第三人表达，本人同意覆盖不到这部分内容。
+
+  - id: RF-06
+    severity: medium
+    label: 以工作任务替代授权请求
+    trigger: task_as_consent
+    message: 要求"整理上交"不等于请求授权，当事人没有拒绝的空间。
+
+  - id: RF-07
+    severity: medium
+    label: 对价未单列
+    trigger: consideration_missing
+    message: 技能化的收益与劳动者无关，对价被工资吸收。
+
+  - id: RF-08
+    severity: low
+    label: 材料归属不清
+    trigger: unknown_type
+    message: 材料类型无法判定，按禁止处理。
+
+  - id: RF-09
+    severity: high
+    label: 授权已过期
+    trigger: consent_expired
+    message: 授权期限已过，继续使用需重新取得同意。
+
+  - id: RF-10
+    severity: high
+    label: 申报与扫描冲突
+    trigger: scan_conflict
+    message: 清单申报为不含第三人信息，但文本扫描到联系方式或观察名单命中。
+
+  - id: RF-11
+    severity: high
+    label: 多说话人未申报
+    trigger: multi_speaker
+    message: 材料里出现第二个说话人，说明含第三人表达，与"不含第三人"的申报矛盾。
+
+  - id: RF-12
+    severity: high
+    label: 准标识符组合可识别
+    trigger: quasi_identifier_combo
+    message: 多份材料的属性拼起来足以指向具体个人，需整体复核或显式确认。

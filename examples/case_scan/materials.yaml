@@ -1,0 +1,11 @@
+version: 1
+# 申报为"不含第三人"，但正文里有手机号、邮箱与人名 —— 应被判为申报冲突
+materials:
+  - id: M01
+    path: 对接人记录.md
+    type: work_doc
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false

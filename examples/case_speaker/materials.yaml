@@ -1,0 +1,20 @@
+version: 1
+# 同意要件全部齐全，但材料里出现了第二个说话人 —— 本人同意覆盖不到第三人
+materials:
+  - id: M01
+    path: 对话_申报无第三人.md
+    type: chat
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false
+    consent: separate
+    consent_terms: >
+      本人同意将上述对话用于训练团队内部查询的技能包，范围限于项目复盘，
+      期限一年，对价单独支付，可随时要求停止调用。
+    consent_at_exit_process: false
+    consideration_listed: true
+    revocable: true
+    scope: 团队内部项目复盘
+    expiry: "2027-11-13"

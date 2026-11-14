@@ -1,0 +1,20 @@
+version: 1
+# 典型反面案例：概括授权 + 离职期签署 + 无退出 + 无期限
+materials:
+  - id: M01
+    path: 决策复盘.md
+    type: note
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false
+    consent: blanket
+    consent_terms: >
+      员工在职期间形成的工作成果与数据归公司所有，公司有权用于业务优化与管理提升，
+      无需另行通知本人。
+    consent_at_exit_process: true
+    consideration_listed: false
+    revocable: false
+    scope: ""
+    expiry: ""

@@ -1,0 +1,23 @@
+version: 1
+# 准标识符组合：单独看都不足以定位，拼起来就能指向具体个人。
+# 清单里用 attributes 字段申报每份材料含哪些属性，工具对整个语料取并集。
+combos:
+  - id: QI-01
+    label: 姓名 + 手机号
+    attributes: [姓名, 手机号]
+
+  - id: QI-02
+    label: 姓名 + 部门 + 工号
+    attributes: [姓名, 部门, 工号]
+
+  - id: QI-03
+    label: 姓名 + 学校 + 专业 + 年级
+    attributes: [姓名, 学校, 专业, 年级]
+
+  - id: QI-04
+    label: 姓名 + 城市 + 公司 + 职位
+    attributes: [姓名, 城市, 公司, 职位]
+
+  - id: QI-05
+    label: 姓名 + 邮箱
+    attributes: [姓名, 邮箱]

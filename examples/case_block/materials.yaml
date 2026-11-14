@@ -1,0 +1,30 @@
+version: 1
+materials:
+  - id: M01
+    path: 聊天记录_摘录.txt
+    type: chat
+    author: mixed
+    contains_third_party: true
+    contains_personal_expression: true
+    contains_identifiable_style: false
+    subject_refused: false
+    consent: none
+
+  - id: M02
+    path: 私人日记.md
+    type: note
+    author: self
+    contains_third_party: false
+    contains_personal_expression: true
+    contains_identifiable_style: false
+    subject_refused: false
+    consent: none
+
+  - id: M03
+    path: 交接清单.md
+    type: process_doc
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false

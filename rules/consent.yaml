@@ -1,0 +1,41 @@
+version: 1
+# 同意五项实质审查。缺一项即挂起。
+# 依据：研究报告第四章结论二。
+requirements:
+  - id: separate
+    label: 单独签署
+    hint: 不得与其他条款合并签署，不得以工作任务替代授权请求
+    check: consent_is_separate
+
+  - id: scope
+    label: 明确用途、范围与期限
+    hint: 不得使用"业务优化""管理提升"等概括表述
+    check: scope_and_expiry_present
+
+  - id: timing
+    label: 时点自由
+    hint: 不在离职谈判、离职证明办理、背景调查期间取得
+    check: not_at_exit_process
+
+  - id: consideration
+    label: 对价单独计列
+    hint: 不与工资、奖金、离职补偿混同
+    check: consideration_listed
+
+  - id: revocable
+    label: 可撤回且有退出通道
+    hint: 当事人可要求停止调用，并能得到可查验的确认
+    check: revocable
+
+# 出现即判为概括性授权，直接打回重签
+blanket_phrases:
+  - 业务优化
+  - 管理提升
+  - 公司所有
+  - 归公司所有
+  - 有权使用
+  - 无需另行通知
+  - 不可撤销
+  - 永久授权
+  - 一切用途
+  - 包括但不限于

@@ -1,0 +1,22 @@
+version: 1
+# 单独看都没问题：一份有姓名+部门，一份有工号。拼起来就是 姓名+部门+工号。
+materials:
+  - id: M01
+    path: 组织信息.md
+    type: work_doc
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false
+    attributes: [姓名, 部门]
+
+  - id: M02
+    path: 工号表.md
+    type: work_doc
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false
+    attributes: [工号]

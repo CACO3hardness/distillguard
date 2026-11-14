@@ -1,0 +1,20 @@
+version: 1
+materials:
+  - id: M01
+    path: 项目判断依据笔记.md
+    type: note
+    author: self
+    contains_third_party: false
+    contains_personal_expression: false
+    contains_identifiable_style: false
+    subject_refused: false
+    consent: separate
+    consent_terms: >
+      本人同意将上述笔记用于训练一个仅供本团队内部查询的技能包，
+      使用范围为项目选型与需求评估，期限一年，自签署之日起算。
+      对价单独支付，本人可随时要求停止调用并删除相关数据。
+    consent_at_exit_process: false
+    consideration_listed: true
+    revocable: true
+    scope: 团队内部项目选型与需求评估
+    expiry: "2027-11-13"

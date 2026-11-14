@@ -1,0 +1,52 @@
+version: 1
+# 三层边界。按顺序匹配，先命中先用。
+# 依据：研究报告第四章表 7、表 12。
+tiers:
+  - id: prohibited
+    label: 禁止提取
+    action: block
+    description: >
+      与工作无关的私人表达、他人隐私、可识别或可复现特定个人身份的表达习惯、
+      当事人明确拒绝的部分。任何同意都不产生效力。
+    when_any:
+      - field: subject_refused
+        equals: true
+      - field: contains_third_party
+        equals: true
+      - field: contains_personal_expression
+        equals: true
+      - field: contains_identifiable_style
+        equals: true
+      - field: author
+        equals: other
+      - field: type
+        equals: other
+
+  - id: consent
+    label: 需单独书面同意
+    action: hold
+    description: >
+      个人判断偏好、沟通风格、优先级排序依据、非职务形成的个人方法论。
+      须单独书面同意，明确用途、范围与期限，对价单独计列，到期重新授权。
+    when_any:
+      - field: type
+        in: [note, self_description, chat, email]
+      - field: author
+        equals: mixed
+
+  - id: free
+    label: 可提取
+    action: allow
+    description: >
+      制度化流程与标准、岗位说明书、已公开资料、与他人无关的操作方法。
+      纳入一般交接安排，无需单独同意，但须列入交接清单。
+    when_any:
+      - field: type
+        in: [process_doc, public, work_doc]
+
+# 匹配不到任何一层时的兜底：fail closed
+default:
+  id: prohibited
+  label: 禁止提取
+  action: block
+  description: 无法判定归属，按禁止处理。

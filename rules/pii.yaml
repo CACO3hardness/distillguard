@@ -1,0 +1,33 @@
+version: 1
+# 高置信度模式：命中即视为"疑似第三人信息"，与清单申报交叉核对。
+# 注意：这不是完整的个人信息识别，只是防误报的交叉检查。
+patterns:
+  - id: mobile_cn
+    label: 手机号
+    severity: high
+    regex: '(?<!\d)1[3-9]\d{9}(?!\d)'
+
+  - id: email
+    label: 邮箱
+    severity: high
+    regex: '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+
+  - id: id_card
+    label: 身份证号
+    severity: high
+    regex: '(?<!\d)\d{17}[0-9Xx](?!\d)'
+
+  - id: qq
+    label: QQ 号
+    severity: medium
+    regex: '(?i)(?:qq|企鹅)\s*[:：]?\s*\d{5,12}'
+
+  - id: wechat
+    label: 微信号
+    severity: medium
+    regex: '(?i)(?:微信|wechat|wx)\s*[:：]\s*[A-Za-z][-_A-Za-z0-9]{5,19}'
+
+  - id: at_mention
+    label: "@提及"
+    severity: low
+    regex: '@[\w\u4e00-\u9fa5]{2,20}'
