@@ -3,6 +3,12 @@
 """探针：尝试读取 ../raw，用来验证 --lock-raw 是否真的断开了原始目录。"""
 
 from pathlib import Path
+import sys
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 raw = Path("../raw").resolve()
 print(f"probe_raw: {raw}")

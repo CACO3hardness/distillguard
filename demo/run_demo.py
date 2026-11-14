@@ -46,7 +46,8 @@ def rule(ch: str = "─", n: int = 64) -> str:
 def run(args: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(
         [sys.executable] + args,
-        capture_output=True, text=True, encoding="utf-8", cwd=str(cwd) if cwd else None,
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        cwd=str(cwd) if cwd else None,
     )
 
 
@@ -241,6 +242,12 @@ def main() -> int:
     args = parser.parse_args()
 
     USE_COLOR = not args.no_color
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+        except Exception:
+            pass
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:

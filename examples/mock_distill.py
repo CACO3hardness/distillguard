@@ -11,7 +11,13 @@ import argparse
 import json
 import os
 import shutil
+import sys
 from pathlib import Path
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 
 def main() -> int:
