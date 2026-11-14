@@ -246,12 +246,22 @@ def match_condition(item: dict, cond: dict) -> bool:
     return False
 
 
-def classify(item: dict, tiers: dict) -> dict:
+TIER_REASON = {
+    "subject_refused": "当事人明确拒绝交出",
+    "contains_third_party": "含第三人的话、姓名或隐私",
+    "contains_personal_expression": "含与工作无关的私人内容",
+    "contains_identifiable_style": "含可识别身份的表达习惯",
+    "author": "材料由他人产出",
+    "type": "材料类型无法判定",
+}
+
+
+def classify(item: dict, tiers: dict):
     for tier in tiers["tiers"]:
         for cond in tier.get("when_any", []):
             if match_condition(item, cond):
-                return tier
-    return tiers["default"]
+                return tier, cond
+    return tiers["default"], {}
 
 
 def consent_review(item: dict, consent_rules: dict) -> tuple[list[str], list[str]]:
@@ -327,11 +337,13 @@ def cmd_gate(args) -> int:
         if missing:
             tier = tiers["default"]
             tier_id, tier_label, action = tier["id"], tier["label"], tier["action"]
+            tier_reason = "清单字段缺失：" + "、".join(missing)
             gaps, hits, flags = [], [], [{"id": "RF-08", "label": "字段缺失", "detail": "、".join(missing)}]
             result = "blocked"
         else:
-            tier = classify(item, tiers)
+            tier, cond = classify(item, tiers)
             tier_id, tier_label, action = tier["id"], tier["label"], tier["action"]
+            tier_reason = TIER_REASON.get(cond.get("field"), "")
             gaps, hits = ([], [])
             flags = []
             if tier_id == "consent":
@@ -399,6 +411,7 @@ def cmd_gate(args) -> int:
             "type": item.get("type"),
             "tier": tier_id,
             "tier_label": tier_label,
+            "tier_reason": tier_reason,
             "result": result,
             "gaps": gaps,
             "blanket_hits": hits,

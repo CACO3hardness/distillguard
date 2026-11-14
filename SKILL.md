@@ -95,6 +95,17 @@ python scripts/guard.py audit --run examples/case_block/run \
     --package examples/case_block/skill_package
 ```
 
+清单不知道怎么填时，先用申报引导员：
+
+```bash
+python scripts/guide.py survey --src raw --out guide     # 出三个问题
+python scripts/guide.py build --draft guide/draft.yaml \
+    --answers guide/answers.yaml --out materials.yaml
+python scripts/guide.py explain --run run                # 解释每条拦截
+```
+
+引导员只负责问与写清单，不参与判断；它写出的清单仍要经过同一套闸门。
+
 如果下游是 agent 而不是命令，改用交接包：
 
 ```bash

@@ -15,6 +15,7 @@ BASE = Path(__file__).resolve().parent.parent
 GUARD = BASE / "scripts" / "guard.py"
 RUN_GUARDED = BASE / "scripts" / "run_guarded.py"
 HANDOFF = BASE / "scripts" / "handoff.py"
+GUIDE = BASE / "scripts" / "guide.py"
 EX = BASE / "examples"
 
 
@@ -220,6 +221,71 @@ class WatermarkCases(unittest.TestCase):
         res = call(GUARD, "audit", "--run", self.run_dir, "--package", self.pkg)
         self.assertEqual(res.returncode, 2)
         self.assertIn("超期调用", res.stdout)
+
+
+class GuideCases(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.dir = Path(self.tmp.name)
+
+    def survey(self):
+        res = call(GUIDE, "survey", "--src", EX / "case_block" / "raw", "--out", self.dir)
+        self.assertEqual(res.returncode, 0)
+        return res
+
+    def test_survey_creates_draft_and_questions(self):
+        self.survey()
+        draft = (self.dir / "draft.yaml").read_text(encoding="utf-8")
+        questions = (self.dir / "questions.md").read_text(encoding="utf-8")
+        self.assertIn("M01", draft)
+        self.assertEqual(draft.count("author: null"), 3)
+        self.assertIn("Q1", questions)
+        self.assertIn("Q2", questions)
+        self.assertIn("Q3", questions)
+
+    def test_build_handles_yaml_boolean_no(self):
+        """YAML 会把 no 解析成 False，构建时不能当成"没填"。"""
+        self.survey()
+        answers = self.dir / "answers.yaml"
+        answers.write_text(
+            "M01:\n  author: self\n  third_party: no\n  nature: process\n"
+            "M02:\n  author: self\n  third_party: no\n  nature: private\n"
+            "M03:\n  author: mixed\n  third_party: yes\n  nature: process\n",
+            encoding="utf-8")
+        out = self.dir / "materials.yaml"
+        res = call(GUIDE, "build", "--draft", self.dir / "draft.yaml",
+                   "--answers", answers, "--out", out)
+        self.assertEqual(res.returncode, 0)
+        text = out.read_text(encoding="utf-8")
+        self.assertEqual(text.count("contains_third_party: false"), 2)
+        self.assertEqual(text.count("contains_third_party: true"), 1)
+
+    def test_build_refuses_incomplete_answers(self):
+        self.survey()
+        answers = self.dir / "answers.yaml"
+        answers.write_text("M01:\n  author: self\n", encoding="utf-8")
+        res = call(GUIDE, "build", "--draft", self.dir / "draft.yaml",
+                   "--answers", answers, "--out", self.dir / "materials.yaml")
+        self.assertEqual(res.returncode, 2)
+        self.assertIn("没答完", res.stdout)
+
+    def test_explain_uses_specific_reason(self):
+        self.survey()
+        answers = self.dir / "answers.yaml"
+        answers.write_text(
+            "M01:\n  author: self\n  third_party: no\n  nature: process\n"
+            "M02:\n  author: self\n  third_party: no\n  nature: private\n"
+            "M03:\n  author: mixed\n  third_party: yes\n  nature: process\n",
+            encoding="utf-8")
+        call(GUIDE, "build", "--draft", self.dir / "draft.yaml",
+             "--answers", answers, "--out", self.dir / "materials.yaml")
+        call(GUARD, "gate", "--manifest", self.dir / "materials.yaml",
+             "--src", EX / "case_block" / "raw", "--out", self.dir / "run")
+        res = call(GUIDE, "explain", "--run", self.dir / "run")
+        self.assertEqual(res.returncode, 0)
+        self.assertIn("私人内容", res.stdout)
+        self.assertIn("三条路", res.stdout)
 
 
 if __name__ == "__main__":

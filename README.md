@@ -95,6 +95,35 @@ python scripts/guard.py audit --run examples/case_consent/run \
 
 ---
 
+## 申报引导员（可选）
+
+清单要人填，但多数人不知道该申报什么。`guide.py` 把它变成三个问题：
+
+```bash
+# 1. 扫目录，出草稿与问卷
+python scripts/guide.py survey --src raw --out guide
+
+# 2. 答完写进 guide/answers.yaml，生成正式清单
+python scripts/guide.py build --draft guide/draft.yaml \
+    --answers guide/answers.yaml --out materials.yaml
+
+# 3. 跑完闸门后，用大白话解释每条拦截
+python scripts/guide.py explain --run run
+```
+
+三个问题：
+
+1. 这份材料是谁写的？（只有我／只有别人／我和别人都有）
+2. 里面有没有别人的话、姓名、联系方式或隐私？（有／没有／不确定）
+3. 这份材料主要是什么？（流程与公开资料／我个人的判断／私人内容）
+
+三问正好对应三层边界。选"不确定"一律按含第三人处理，宁可多拦一次。
+
+**边界**：引导员只写 `materials.yaml`，改不了闸门。它说的话不算数，闸门读的清单才算数——
+人负责申报，规则负责判断，agent 负责沟通。
+
+---
+
 ## 三道闸
 
 ### 入库闸（命名错位）
@@ -299,7 +328,7 @@ python scripts/guard.py recover --src raw
 python -m unittest discover -s tests -v
 ```
 
-21 个端到端用例，覆盖七个示例案例、扫描冲突、说话人识别、准标识符组合、授权过期、
+25 个端到端用例，覆盖七个示例案例、申报引导、扫描冲突、说话人识别、准标识符组合、授权过期、
 `approved/` 残留、改写后混入、锁目录恢复、交接包、水印与超期调用。CI 配置在 `.github/workflows/ci.yml`，
 在 Python 3.9 与 3.12 上各跑一遍。
 
