@@ -135,6 +135,13 @@ wrapper 把下游进程的工作目录放在 `run/`，只通过 `DISTILLGUARD_MA
 
 退出码：`0` 全部放行；`2` 存在被拦截项；`3` 存在授权缺口或出厂条件不满足。
 
+需要现场演示时：
+
+```bash
+python demo/run_demo.py            # 五幕，回车推进
+python demo/run_demo.py --auto 3   # 自动推进
+```
+
 ## 材料清单字段
 
 | 字段 | 取值 | 说明 |

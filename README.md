@@ -95,6 +95,20 @@ python scripts/guard.py audit --run examples/case_consent/run \
 
 ---
 
+## 一键演示
+
+```bash
+python demo/run_demo.py            # 回车推进
+python demo/run_demo.py --auto 3   # 每幕停 3 秒自动推进
+```
+
+Windows 上双击 `demo/run_demo.cmd` 即可，脚本会自动找 Python。
+
+五幕：概括授权被拦 → 同意齐全但多说话人 → 原始目录消失 → 改写混入被查 → 修复后放行。
+跑完生成 `demo/report.html`，深色排版，可直接投屏。
+
+---
+
 ## 申报引导员（可选）
 
 清单要人填，但多数人不知道该申报什么。`guide.py` 把它变成三个问题：

@@ -9,5 +9,9 @@ examples/*/handoff/
 examples/*/gate_test/
 *.locked-*
 
+# 演示运行产物
+demo/_run/
+demo/report.html
+
 .DS_Store
 Thumbs.db

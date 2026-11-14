@@ -278,7 +278,7 @@ def consent_review(item: dict, consent_rules: dict) -> tuple[list[str], list[str
     if not item.get("revocable"):
         gaps.append("可撤回且有退出通道")
     expiry = parse_date(item.get("expiry"))
-    if expiry is None or expiry < date.today():
+    if expiry is not None and expiry < date.today():
         gaps.append("授权未过期")
 
     terms = str(item.get("consent_terms", ""))
@@ -307,7 +307,7 @@ def redflags(item: dict, tier_id: str, hits: list[str], consent_gaps: list[str])
     if item.get("type") == "other" or item.get("author") == "other":
         flags.append({"id": "RF-08", "label": "材料归属不清", "detail": "按禁止处理"})
     expiry = parse_date(item.get("expiry"))
-    if tier_id == "consent" and (expiry is None or expiry < date.today()):
+    if tier_id == "consent" and expiry is not None and expiry < date.today():
         flags.append({"id": "RF-09", "label": "授权已过期", "detail": "需重新取得同意"})
     return flags
 
