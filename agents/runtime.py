@@ -23,12 +23,23 @@ ALLOWED_TRANSITIONS = {
         "declaration_needs_more_answers",
     },
     "declaration_needs_more_answers": {"manifest_ready"},
-    "manifest_ready": {"gate_approved", "gate_pending", "gate_blocked", "gate_error"},
+    "manifest_ready": {
+        "gate_approved",
+        "gate_pending",
+        "gate_partial_blocked",
+        "gate_blocked",
+        "gate_error",
+    },
     "gate_pending": {"awaiting_consent_or_revision"},
     "awaiting_consent_or_revision": {"manifest_ready"},
     "gate_blocked": set(),
+    "gate_partial_blocked": {"audit_pending"},
     "gate_error": set(),
-    "gate_approved": set(),
+    "gate_approved": {"audit_pending"},
+    "audit_pending": {"audit_passed", "audit_violation", "audit_error"},
+    "audit_violation": {"audit_pending"},
+    "audit_error": {"audit_pending"},
+    "audit_passed": set(),
 }
 
 
@@ -91,10 +102,13 @@ class SharedWorkspace:
             "agents": {
                 "declaration_agent": {"status": "idle"},
                 "gate_agent": {"status": "idle"},
+                "audit_agent": {"status": "idle"},
             },
             "artifacts": {},
             "gate": {},
             "gate_history": [],
+            "audit": {},
+            "audit_history": [],
             "messages": [],
         })
 
@@ -106,6 +120,7 @@ class SharedWorkspace:
         state.setdefault("round", 1)
         state.setdefault("stage_history", [])
         state.setdefault("gate_history", [])
+        state.setdefault("audit_history", [])
         return state
 
     def update(self, **values: Any) -> dict[str, Any]:
@@ -152,6 +167,12 @@ class SharedWorkspace:
         state = self.state()
         state["gate"] = payload
         state.setdefault("gate_history", []).append(payload)
+        self._write_state(state)
+
+    def record_audit(self, payload: dict[str, Any]) -> None:
+        state = self.state()
+        state["audit"] = payload
+        state.setdefault("audit_history", []).append(payload)
         self._write_state(state)
 
     def send(

@@ -3,9 +3,11 @@
 
 import json
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 
+from agents.audit_agent import AuditResult
 from agents.coordinator import MultiAgentCoordinator
 from agents.declaration_agent import DeclarationAgent
 from agents.gate_agent import GateAgent
@@ -156,10 +158,12 @@ class CoordinatorCases(unittest.TestCase):
             all(message["thread_id"] == state["thread_id"] for message in state["messages"])
         )
 
-    def test_end_to_end_blocked_is_terminal(self):
+    def test_end_to_end_partial_block_does_not_auto_revise(self):
         coordinator, result = self.run_case("case_block", "block_answers.yaml")
         self.assertEqual(result.exit_code, 2)
-        self.assertEqual(coordinator.workspace.state()["stage"], "gate_blocked")
+        self.assertEqual(
+            coordinator.workspace.state()["stage"], "gate_partial_blocked"
+        )
         summary = json.loads(
             (self.root / "case_block" / "gate_summary.json").read_text(encoding="utf-8")
         )
@@ -174,6 +178,77 @@ class CoordinatorCases(unittest.TestCase):
                 ANSWERS / "revision_corrected.yaml",
                 output_fn=lambda _text: None,
             )
+
+
+class AuditAgentCases(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+
+    def coordinator_after_gate(self, case="case_pass", answers="pass_answers.yaml"):
+        coordinator = MultiAgentCoordinator(self.root / case, EX / case / "raw")
+        gate_result = coordinator.run(
+            answers=ANSWERS / answers,
+            output_fn=lambda _text: None,
+        )
+        return coordinator, gate_result
+
+    def test_clean_package_passes_audit(self):
+        coordinator, _ = self.coordinator_after_gate()
+        package = self.root / "package-clean"
+        result = coordinator.audit(package, output_fn=lambda _text: None)
+        self.assertIsInstance(result, AuditResult)
+        self.assertEqual(result.decision, "audit_passed")
+        self.assertTrue(result.issue_id.startswith("DG-"))
+        self.assertTrue((package / "audit.json").exists())
+        self.assertTrue((package / "成分表.md").exists())
+        state = coordinator.workspace.state()
+        self.assertEqual(state["stage"], "audit_passed")
+        self.assertEqual(state["agents"]["audit_agent"]["status"], "audit_passed")
+
+    def test_blocked_leak_is_detected_and_can_be_reaudited(self):
+        coordinator, gate_result = self.coordinator_after_gate(
+            "case_block", "block_answers.yaml"
+        )
+        self.assertEqual(gate_result.decision, "partial_blocked")
+        package = self.root / "package-leak"
+        package.mkdir()
+        leak = package / "leak.txt"
+        shutil.copy2(EX / "case_block" / "raw" / "聊天记录_摘录.txt", leak)
+
+        failed = coordinator.audit(package, output_fn=lambda _text: None)
+        self.assertEqual(failed.decision, "audit_violation")
+        self.assertEqual(failed.audit_exit, 2)
+        self.assertIn("越界", failed.explanation)
+
+        leak.unlink()
+        passed = coordinator.audit(package, output_fn=lambda _text: None)
+        self.assertEqual(passed.decision, "audit_passed")
+        self.assertEqual(len(coordinator.workspace.state()["audit_history"]), 2)
+
+    def test_audit_rejected_before_gate(self):
+        coordinator = MultiAgentCoordinator(
+            self.root / "not-approved", EX / "case_pass" / "raw"
+        )
+        with self.assertRaisesRegex(RuntimeError, "不允许审计"):
+            coordinator.audit(
+                self.root / "package-not-approved",
+                output_fn=lambda _text: None,
+            )
+
+    def test_run_can_auto_continue_to_audit(self):
+        coordinator = MultiAgentCoordinator(
+            self.root / "auto-audit", EX / "case_pass" / "raw"
+        )
+        result = coordinator.run(
+            answers=ANSWERS / "pass_answers.yaml",
+            package=self.root / "package-auto",
+            output_fn=lambda _text: None,
+        )
+        self.assertIsInstance(result, AuditResult)
+        self.assertEqual(result.decision, "audit_passed")
+        self.assertEqual(coordinator.workspace.state()["stage"], "audit_passed")
 
 
 if __name__ == "__main__":

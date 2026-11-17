@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable
 
+from .audit_agent import AuditAgent, AuditResult
 from .declaration_agent import DeclarationAgent
 from .gate_agent import GateAgent, GateResult
 from .runtime import SharedWorkspace
@@ -18,13 +19,15 @@ class MultiAgentCoordinator:
         self.workspace.initialize("将离职材料申报并送入 DistillGuard 闸门", src)
         self.declaration = DeclarationAgent(self.workspace)
         self.gate = GateAgent(self.workspace)
+        self.audit_agent = AuditAgent(self.workspace)
 
     def run(
         self,
         answers: dict[str, Any] | Path | str | None = None,
+        package: Path | str | None = None,
         input_fn: Callable[[str], str] = input,
         output_fn: Callable[[str], None] = print,
-    ) -> GateResult:
+    ) -> GateResult | AuditResult:
         state = self.workspace.state()
         if state["stage"] != "initialized":
             raise RuntimeError(
@@ -50,14 +53,17 @@ class MultiAgentCoordinator:
 
         output_fn("申报完成，已移交给闸门 Agent。")
         result = self._evaluate_gate(manifest.manifest_path, src)
-        self._report_result(result, output_fn)
+        self._report_result(result, output_fn, send_final=package is None)
+        if package is not None and result.decision in {"approved", "partial_blocked"}:
+            return self.audit(package, output_fn)
         return result
 
     def revise(
         self,
         answers: dict[str, Any] | Path | str,
+        package: Path | str | None = None,
         output_fn: Callable[[str], None] = print,
-    ) -> GateResult:
+    ) -> GateResult | AuditResult:
         state = self.workspace.state()
         if state["stage"] != "awaiting_consent_or_revision":
             raise RuntimeError(
@@ -86,7 +92,41 @@ class MultiAgentCoordinator:
 
         output_fn(f"申报 Agent 已提交第 {round_number} 轮材料清单。")
         result = self._evaluate_gate(manifest.manifest_path, state["src"])
-        self._report_result(result, output_fn)
+        self._report_result(result, output_fn, send_final=package is None)
+        if package is not None and result.decision in {"approved", "partial_blocked"}:
+            return self.audit(package, output_fn)
+        return result
+
+    def audit(
+        self,
+        package: Path | str,
+        output_fn: Callable[[str], None] = print,
+    ) -> AuditResult:
+        state = self.workspace.state()
+        if state["stage"] not in {
+            "gate_approved",
+            "gate_partial_blocked",
+            "audit_violation",
+            "audit_error",
+        }:
+            raise RuntimeError(
+                f"当前阶段 {state['stage']} 不允许审计；"
+                "只有 gate_approved 或待返工工作区可以启动审计员 Agent。"
+            )
+        gate_run = Path(state["artifacts"]["gate_run"])
+        self.workspace.send(
+            "coordinator",
+            self.audit_agent.name,
+            "audit_task",
+            {"run_dir": str(gate_run), "package": str(Path(package).resolve())},
+        )
+        result = self.audit_agent.evaluate(gate_run, package)
+        output_fn(
+            f"审计结果：{result.decision}，签发编号 {result.issue_id or '未生成'}。"
+        )
+        if result.explanation:
+            output_fn(result.explanation)
+        self.workspace.send("coordinator", "user", "final", result.payload())
         return result
 
     def _evaluate_gate(self, manifest: Path, src: Path | str) -> GateResult:
@@ -98,6 +138,7 @@ class MultiAgentCoordinator:
         self,
         result: GateResult,
         output_fn: Callable[[str], None],
+        send_final: bool = True,
     ) -> None:
         summary = result.summary
         output_fn(
@@ -113,12 +154,13 @@ class MultiAgentCoordinator:
         elif result.explanation:
             output_fn(result.explanation)
 
-        self.workspace.send(
-            "coordinator",
-            "user",
-            "final",
-            self.gate.summary_payload(result),
-        )
+        if send_final:
+            self.workspace.send(
+                "coordinator",
+                "user",
+                "final",
+                self.gate.summary_payload(result),
+            )
 
     @staticmethod
     def collect_answers(

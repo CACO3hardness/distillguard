@@ -30,10 +30,11 @@ metadata:
 
 ## 多 Agent 运行模式
 
-第一版由两个专用 Agent 组成，外加一个只负责转交消息的协调器：
+当前版本由三个专用 Agent 组成，外加一个只负责转交消息的协调器：
 
 - **申报 Agent**：扫描材料、逐项提问、生成 `draft.yaml`、`answers.yaml` 和 `materials.yaml`。它不判断放行。
 - **闸门 Agent**：调用 `guard.py gate`，读取 `run.json`，把结果解释为 `approved / pending / blocked`。它不替用户补事实。
+- **审计员 Agent**：只对已批准或部分批准的工作区调用 `seal` 与 `audit`，检查混入、超期调用和封条信息。它不修改技能包内容。
 - **协调器**：只转交任务、挂起项和结果，不覆盖任何闸门结论。
 
 Agent 使用确定性工具，不需要训练模型。运行入口：
@@ -48,6 +49,16 @@ python -m agents run \
 python -m agents revise \
     --workspace ../agent_demo/pending \
     --answers ../path/to/revised_answers.yaml
+```
+
+批准后继续交给审计员：
+
+```bash
+python -m agents run \
+    --src examples/case_pass/raw \
+    --workspace ../agent_demo/pass \
+    --answers examples/agent/pass_answers.yaml \
+    --package ../agent_demo/pass/package
 ```
 
 省略 `--answers` 时，申报 Agent 会在终端逐份询问三个申报问题。运行状态和跨 Agent 消息分别写入

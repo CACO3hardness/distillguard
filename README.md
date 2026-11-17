@@ -39,12 +39,13 @@ raw/  ──[gate]──>  approved/   ──>  蒸馏工具只读这里
 
 ---
 
-## 多 Agent 模式：申报 Agent → 闸门 Agent
+## 多 Agent 模式：申报 Agent → 闸门 Agent → 审计员 Agent
 
-仓库包含一个可直接运行的两 Agent 流程：
+仓库包含一个可直接运行的三 Agent 流程：
 
 - **申报 Agent** 负责扫描、逐题询问并生成材料清单，不能自行放行；
 - **闸门 Agent** 负责调用确定性规则并解释 approved、pending、blocked，不能替用户补填；
+- **审计员 Agent** 负责封条、出包核查和调用记录检查，不能修改技能包或覆盖审计失败；
 - **协调器** 只转交任务和挂起项，不参与材料判断。
 
 ```bash
@@ -61,9 +62,16 @@ python -m agents run \
 python -m agents revise \
     --workspace ../agent_demo/pending \
     --answers ../path/to/revised_answers.yaml
+
+# 批准后自动封条并交给审计员 Agent
+python -m agents run \
+    --src examples/case_pass/raw \
+    --workspace ../agent_demo/audit \
+    --answers examples/agent/pass_answers.yaml \
+    --package ../agent_demo/audit/package
 ```
 
-这两个 Agent 使用确定性工具，不需要训练模型。每次运行的共享状态、消息和工具调用分别保存在
+这些 Agent 使用确定性工具，不需要训练模型。每次运行的共享状态、消息和工具调用分别保存在
 `agent_state.json`、`agent_messages.jsonl`、`agent_tools.jsonl`。`pending` 后使用 `revise`
 进入下一轮，每轮清单与闸门结果分别保存在 `round-N/`，历史不会被覆盖。角色边界、状态机和扩展方式见
 [`docs/multi_agent.md`](docs/multi_agent.md)。

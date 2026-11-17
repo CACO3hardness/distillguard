@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 
+from .audit_agent import AuditResult
 from .coordinator import MultiAgentCoordinator
 from .declaration_agent import DeclarationAgent
 from .gate_agent import GateAgent
@@ -14,14 +15,17 @@ from .runtime import SharedWorkspace
 
 
 def print_result(result) -> None:
-    payload = GateAgent.summary_payload(result)
+    if isinstance(result, AuditResult):
+        payload = result.payload()
+    else:
+        payload = GateAgent.summary_payload(result)
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
 def cmd_run(args) -> int:
     coordinator = MultiAgentCoordinator(args.workspace, args.src)
     answers = Path(args.answers) if args.answers else None
-    result = coordinator.run(answers=answers)
+    result = coordinator.run(answers=answers, package=args.package)
     print(f"\nAgent 状态：{coordinator.workspace.state_path}")
     print_result(result)
     return result.exit_code
@@ -31,7 +35,17 @@ def cmd_revise(args) -> int:
     state_workspace = SharedWorkspace(args.workspace)
     state = state_workspace.state()
     coordinator = MultiAgentCoordinator(args.workspace, state["src"])
-    result = coordinator.revise(Path(args.answers))
+    result = coordinator.revise(Path(args.answers), package=args.package)
+    print(f"\nAgent 状态：{coordinator.workspace.state_path}")
+    print_result(result)
+    return result.exit_code
+
+
+def cmd_audit(args) -> int:
+    state_workspace = SharedWorkspace(args.workspace)
+    state = state_workspace.state()
+    coordinator = MultiAgentCoordinator(args.workspace, state["src"])
+    result = coordinator.audit(args.package)
     print(f"\nAgent 状态：{coordinator.workspace.state_path}")
     print_result(result)
     return result.exit_code
@@ -59,20 +73,27 @@ def cmd_gate(args) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="DistillGuard 多 Agent：申报 Agent → 闸门 Agent"
+        description="DistillGuard 多 Agent：申报 Agent → 闸门 Agent → 审计员 Agent"
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    run = sub.add_parser("run", help="执行申报和过闸；无 --answers 时进入交互问答")
+    run = sub.add_parser("run", help="执行申报和过闸；可继续交审计员核查")
     run.add_argument("--src", required=True)
     run.add_argument("--workspace", required=True)
     run.add_argument("--answers", help="已有 answers.yaml；省略则逐题提问")
+    run.add_argument("--package", help="闸门批准后由审计员 Agent 封条并核查的技能包目录")
     run.set_defaults(func=cmd_run)
 
     revise = sub.add_parser("revise", help="对 pending 工作区提交下一轮材料事实")
     revise.add_argument("--workspace", required=True)
     revise.add_argument("--answers", required=True)
+    revise.add_argument("--package", help="修订后若获批准，自动交给审计员 Agent")
     revise.set_defaults(func=cmd_revise)
+
+    audit = sub.add_parser("audit", help="对已获批准的技能包运行审计员 Agent")
+    audit.add_argument("--workspace", required=True)
+    audit.add_argument("--package", required=True)
+    audit.set_defaults(func=cmd_audit)
 
     survey = sub.add_parser("survey", help="只运行申报 Agent 并生成问卷")
     survey.add_argument("--src", required=True)

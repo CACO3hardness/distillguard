@@ -75,7 +75,7 @@ class GateAgent:
             stage = "gate_pending"
         elif result.exit_code == 2:
             decision = "blocked" if not approved else "partial_blocked"
-            stage = "gate_blocked"
+            stage = "gate_blocked" if decision == "blocked" else "gate_partial_blocked"
         else:
             decision = "error"
             stage = "gate_error"

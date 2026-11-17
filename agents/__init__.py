@@ -1,7 +1,8 @@
 """Rule-backed multi-agent orchestration for DistillGuard."""
 
 from .coordinator import MultiAgentCoordinator
+from .audit_agent import AuditAgent
 from .declaration_agent import DeclarationAgent
 from .gate_agent import GateAgent
 
-__all__ = ["DeclarationAgent", "GateAgent", "MultiAgentCoordinator"]
+__all__ = ["AuditAgent", "DeclarationAgent", "GateAgent", "MultiAgentCoordinator"]
