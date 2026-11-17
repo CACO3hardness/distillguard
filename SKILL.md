@@ -28,7 +28,37 @@ metadata:
 3. **不得代填。** 材料清单由使用者填写，本 skill 只做校验与清点，不替使用者猜测某份材料是否含第三人信息。
 4. **结论不等于许可。** 本 skill 输出的是风险提示与检查清单，不构成法律意见。
 
+## 多 Agent 运行模式
+
+第一版由两个专用 Agent 组成，外加一个只负责转交消息的协调器：
+
+- **申报 Agent**：扫描材料、逐项提问、生成 `draft.yaml`、`answers.yaml` 和 `materials.yaml`。它不判断放行。
+- **闸门 Agent**：调用 `guard.py gate`，读取 `run.json`，把结果解释为 `approved / pending / blocked`。它不替用户补事实。
+- **协调器**：只转交任务、挂起项和结果，不覆盖任何闸门结论。
+
+Agent 使用确定性工具，不需要训练模型。运行入口：
+
+```bash
+python -m agents run \
+    --src examples/case_pending/raw \
+    --workspace ../agent_demo/pending \
+    --answers examples/agent/pending_answers.yaml
+
+# 第二轮：只对 pending 工作区提交补充后的材料事实
+python -m agents revise \
+    --workspace ../agent_demo/pending \
+    --answers ../path/to/revised_answers.yaml
+```
+
+省略 `--answers` 时，申报 Agent 会在终端逐份询问三个申报问题。运行状态和跨 Agent 消息分别写入
+`agent_state.json`、`agent_messages.jsonl` 与 `agent_tools.jsonl`。完整说明见
+[`docs/multi_agent.md`](docs/multi_agent.md)。
+
 ## 三道闸
+
+![DistillGuard 的三闸执行链](assets/diagrams/execution-flow.png)
+
+*材料先申报，再过闸；只有 `approved/` 进入隔离运行，技能包出厂时补齐封条与审计。*
 
 | 闸门 | 对应缺口 | 命令 | 产出 |
 |---|---|---|---|
@@ -54,6 +84,10 @@ metadata:
 清单用 `attributes` 申报属性，拼起来能定位到人的组合判 RF-12。扫描只做交叉核对，不替使用者判断。
 
 ### 授权闸
+
+![五项同意核对](assets/diagrams/consent-gate.png)
+
+*五项是并列必要条件，任何一项缺失都不能以其余项完整为由放行。*
 
 单独同意必须同时满足五项，缺一项即挂起：
 

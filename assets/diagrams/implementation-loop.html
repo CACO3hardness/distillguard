@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>研究落地的四层闭环</title>
+  <style>
+    body { margin: 0; background: #fff; }
+    svg { display: block; width: 1280px; height: 600px; }
+  </style>
+</head>
+<body>
+<svg id="implementation-loop-root" xmlns="http://www.w3.org/2000/svg"
+     width="1280" height="600" viewBox="0 0 1280 600"
+     role="img" aria-labelledby="implementation-loop-title implementation-loop-desc"
+     font-family="'Microsoft YaHei','Noto Sans SC','PingFang SC',sans-serif">
+  <title id="implementation-loop-title">研究落地的四层闭环</title>
+  <desc id="implementation-loop-desc">规范规则、企业流程、技术闸门与当事人救济四个层次依次连接，并用复核结果回写规则。</desc>
+  <defs>
+    <marker id="implementation-loop-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#17365D"/>
+    </marker>
+    <marker id="implementation-loop-arrow-return" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#2E75B6"/>
+    </marker>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="312" y1="260" x2="352" y2="260" stroke="#17365D" stroke-width="4"
+          marker-end="url(#implementation-loop-arrow)"/>
+    <line x1="592" y1="260" x2="632" y2="260" stroke="#17365D" stroke-width="4"
+          marker-end="url(#implementation-loop-arrow)"/>
+    <line x1="872" y1="260" x2="912" y2="260" stroke="#17365D" stroke-width="4"
+          marker-end="url(#implementation-loop-arrow)"/>
+    <path d="M 1032 394 V 492 Q 1032 512 1012 512 H 212 Q 192 512 192 492 V 394"
+          stroke="#2E75B6" stroke-width="4" stroke-dasharray="10 8"
+          marker-end="url(#implementation-loop-arrow-return)"/>
+  </g>
+
+  <!-- 01 规则层 -->
+  <rect x="72" y="150" width="240" height="220" rx="12" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <rect x="96" y="174" width="44" height="28" rx="4" fill="#DCE9F5"/>
+  <text x="118" y="194" text-anchor="middle" font-size="16" font-weight="700" fill="#17365D">01</text>
+  <text x="192" y="229" text-anchor="middle" font-size="26" font-weight="700" fill="#17365D">规则层</text>
+  <text x="192" y="268" text-anchor="middle" font-size="19" fill="#334E68">三层内容边界</text>
+  <text x="192" y="298" text-anchor="middle" font-size="19" fill="#334E68">离职后义务</text>
+  <line x1="96" y1="320" x2="288" y2="320" stroke="#D4DDE6" stroke-width="2"/>
+  <text x="192" y="348" text-anchor="middle" font-size="16" fill="#6B7785">法务 · 行业规范</text>
+
+  <!-- 02 流程层 -->
+  <rect x="352" y="150" width="240" height="220" rx="12" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <rect x="376" y="174" width="44" height="28" rx="4" fill="#DCE9F5"/>
+  <text x="398" y="194" text-anchor="middle" font-size="16" font-weight="700" fill="#17365D">02</text>
+  <text x="472" y="229" text-anchor="middle" font-size="26" font-weight="700" fill="#17365D">企业流程</text>
+  <text x="472" y="268" text-anchor="middle" font-size="19" fill="#334E68">材料分类 · 单独同意</text>
+  <text x="472" y="298" text-anchor="middle" font-size="19" fill="#334E68">调用审计 · 到期删除</text>
+  <line x1="376" y1="320" x2="568" y2="320" stroke="#D4DDE6" stroke-width="2"/>
+  <text x="472" y="348" text-anchor="middle" font-size="16" fill="#6B7785">人力资源 · 业务负责人</text>
+
+  <!-- 03 技术层 -->
+  <rect x="632" y="150" width="240" height="220" rx="12" fill="#FFF8F0" stroke="#C87835" stroke-width="3"/>
+  <rect x="656" y="174" width="44" height="28" rx="4" fill="#F5DFC8"/>
+  <text x="678" y="194" text-anchor="middle" font-size="16" font-weight="700" fill="#9A561E">03</text>
+  <text x="752" y="229" text-anchor="middle" font-size="26" font-weight="700" fill="#17365D">技术闸门</text>
+  <text x="752" y="268" text-anchor="middle" font-size="19" fill="#334E68">approved 输入边界</text>
+  <text x="752" y="298" text-anchor="middle" font-size="19" fill="#334E68">成分表 · 有效期 · 审计</text>
+  <line x1="656" y1="320" x2="848" y2="320" stroke="#E8CFB7" stroke-width="2"/>
+  <text x="752" y="348" text-anchor="middle" font-size="16" fill="#6B7785">技术团队 · 合规负责人</text>
+
+  <!-- 04 救济层 -->
+  <rect x="912" y="150" width="240" height="220" rx="12" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <rect x="936" y="174" width="44" height="28" rx="4" fill="#DCE9F5"/>
+  <text x="958" y="194" text-anchor="middle" font-size="16" font-weight="700" fill="#17365D">04</text>
+  <text x="1032" y="229" text-anchor="middle" font-size="26" font-weight="700" fill="#17365D">当事人救济</text>
+  <text x="1032" y="268" text-anchor="middle" font-size="19" fill="#334E68">查询 · 撤回 · 删除确认</text>
+  <text x="1032" y="298" text-anchor="middle" font-size="19" fill="#334E68">争议复核</text>
+  <line x1="936" y1="320" x2="1128" y2="320" stroke="#D4DDE6" stroke-width="2"/>
+  <text x="1032" y="348" text-anchor="middle" font-size="16" fill="#6B7785">当事人 · 监管 · 内部复核</text>
+
+  <text x="612" y="540" text-anchor="middle" font-size="16" fill="#2E75B6">复核结果回写规则</text>
+  <rect x="72" y="556" width="1136" height="32" rx="6" fill="#EDF2F7"/>
+  <text x="640" y="578" text-anchor="middle" font-size="16" fill="#17365D">
+    验收标准：调用可追 · 期限可到期 · 删除可核验 · 争议可复核
+  </text>
+</svg>
+</body>
+</html>

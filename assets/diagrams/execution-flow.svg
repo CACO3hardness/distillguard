@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="execution-flow-root" xmlns="http://www.w3.org/2000/svg"
+     width="1280" height="560" viewBox="0 0 1280 560"
+     role="img" aria-labelledby="execution-flow-title execution-flow-desc"
+     font-family="'Microsoft YaHei','Noto Sans SC','PingFang SC',sans-serif">
+  <title id="execution-flow-title">DistillGuard 的三闸执行链</title>
+  <desc id="execution-flow-desc">原始材料经引导员申报、闸门分类后，只有获批材料进入隔离运行与蒸馏，出厂时再封条并接受审计。</desc>
+  <defs>
+    <marker id="execution-flow-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#17365D"/>
+    </marker>
+    <marker id="execution-flow-arrow-accent" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#2E75B6"/>
+    </marker>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="280" y1="150" x2="340" y2="150" stroke="#17365D" stroke-width="4"
+          marker-end="url(#execution-flow-arrow)"/>
+    <line x1="560" y1="150" x2="620" y2="150" stroke="#17365D" stroke-width="4"
+          marker-end="url(#execution-flow-arrow)"/>
+    <line x1="840" y1="150" x2="940" y2="150" stroke="#C87835" stroke-width="4"
+          marker-end="url(#execution-flow-arrow)"/>
+    <path d="M 1010 280 V 320 H 190 V 390"
+          stroke="#2E75B6" stroke-width="4" marker-end="url(#execution-flow-arrow-accent)"/>
+    <line x1="300" y1="450" x2="400" y2="450" stroke="#17365D" stroke-width="4"
+          marker-end="url(#execution-flow-arrow)"/>
+    <line x1="620" y1="450" x2="720" y2="450" stroke="#17365D" stroke-width="4"
+          marker-end="url(#execution-flow-arrow)"/>
+    <path d="M 1160 280 V 380" stroke="#C0504D" stroke-width="3" stroke-dasharray="8 7"
+          marker-end="url(#execution-flow-arrow)"/>
+  </g>
+
+  <!-- 原始材料 -->
+  <rect x="60" y="80" width="220" height="140" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <text x="170" y="124" text-anchor="middle" font-size="24" font-weight="700" fill="#17365D">原始材料</text>
+  <text x="170" y="162" text-anchor="middle" font-size="18" fill="#5E6B78">chat / doc / email</text>
+  <text x="170" y="192" text-anchor="middle" font-size="16" fill="#7A8794">保留在 raw/</text>
+
+  <!-- 引导员 -->
+  <rect x="340" y="80" width="220" height="140" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <text x="450" y="124" text-anchor="middle" font-size="24" font-weight="700" fill="#17365D">引导员</text>
+  <text x="450" y="162" text-anchor="middle" font-size="18" fill="#5E6B78">materials.yaml</text>
+  <text x="450" y="192" text-anchor="middle" font-size="16" fill="#7A8794">来源 · 第三人 · 层级</text>
+
+  <!-- 闸门主节点 -->
+  <rect x="620" y="80" width="220" height="160" rx="10" fill="#FFF8F0" stroke="#C87835" stroke-width="3"/>
+  <text x="730" y="122" text-anchor="middle" font-size="24" font-weight="700" fill="#17365D">闸门</text>
+  <text x="730" y="158" text-anchor="middle" font-size="18" fill="#334E68">五条件 · 第三人</text>
+  <text x="730" y="186" text-anchor="middle" font-size="18" fill="#334E68">三层内容边界</text>
+  <text x="730" y="218" text-anchor="middle" font-size="16" fill="#9A561E">失败即拦截</text>
+
+  <!-- 三色分流 -->
+  <rect x="940" y="60" width="260" height="220" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <text x="1070" y="94" text-anchor="middle" font-size="22" font-weight="700" fill="#17365D">三色分流</text>
+  <rect x="972" y="112" width="196" height="42" rx="6" fill="#E7F1EA" stroke="#4F8A5B" stroke-width="2"/>
+  <text x="1070" y="140" text-anchor="middle" font-size="18" font-weight="700" fill="#35633F">approved · 可进入</text>
+  <rect x="972" y="166" width="196" height="42" rx="6" fill="#FAF0E6" stroke="#C87835" stroke-width="2"/>
+  <text x="1070" y="194" text-anchor="middle" font-size="18" font-weight="700" fill="#8E521D">pending · 补要件</text>
+  <rect x="972" y="220" width="196" height="42" rx="6" fill="#F8E5E3" stroke="#C0504D" stroke-width="2"/>
+  <text x="1070" y="248" text-anchor="middle" font-size="18" font-weight="700" fill="#9B3633">blocked · 不进入</text>
+
+  <!-- 获批输入 -->
+  <rect x="80" y="390" width="220" height="120" rx="10" fill="#F2F8F3" stroke="#4F8A5B" stroke-width="2"/>
+  <text x="190" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#17365D">approved 输入</text>
+  <text x="190" y="462" text-anchor="middle" font-size="17" fill="#5E6B78">只把获批路径</text>
+  <text x="190" y="488" text-anchor="middle" font-size="17" fill="#5E6B78">交给下游</text>
+
+  <!-- 蒸馏 -->
+  <rect x="400" y="390" width="220" height="120" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <text x="510" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#17365D">下游蒸馏</text>
+  <text x="510" y="462" text-anchor="middle" font-size="17" fill="#5E6B78">包装器临时移走</text>
+  <text x="510" y="488" text-anchor="middle" font-size="17" fill="#5E6B78">raw/ 目录</text>
+
+  <!-- 出厂 -->
+  <rect x="720" y="390" width="220" height="120" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <text x="830" y="430" text-anchor="middle" font-size="22" font-weight="700" fill="#17365D">封条与审计</text>
+  <text x="830" y="462" text-anchor="middle" font-size="17" fill="#5E6B78">成分表 · 有效期</text>
+  <text x="830" y="488" text-anchor="middle" font-size="17" fill="#5E6B78">签发号 · 调用日志</text>
+
+  <!-- 停止节点 -->
+  <rect x="980" y="380" width="220" height="110" rx="10" fill="#F8E5E3" stroke="#C0504D" stroke-width="2"/>
+  <text x="1090" y="417" text-anchor="middle" font-size="20" font-weight="700" fill="#9B3633">pending / blocked</text>
+  <text x="1090" y="448" text-anchor="middle" font-size="17" fill="#7D4A47">不启动下游</text>
+  <text x="1090" y="474" text-anchor="middle" font-size="15" fill="#7D4A47">每条均有规则号与理由</text>
+
+  <rect x="60" y="516" width="1160" height="34" rx="6" fill="#EDF2F7"/>
+  <text x="640" y="538" text-anchor="middle" font-size="16" fill="#17365D">
+    与三重错位对应：归类回应命名错位 · 五项同意回应同意错位 · 有效期与审计回应时间错位
+  </text>
+</svg>

@@ -39,6 +39,40 @@ raw/  ──[gate]──>  approved/   ──>  蒸馏工具只读这里
 
 ---
 
+## 多 Agent 模式：申报 Agent → 闸门 Agent
+
+仓库包含一个可直接运行的两 Agent 流程：
+
+- **申报 Agent** 负责扫描、逐题询问并生成材料清单，不能自行放行；
+- **闸门 Agent** 负责调用确定性规则并解释 approved、pending、blocked，不能替用户补填；
+- **协调器** 只转交任务和挂起项，不参与材料判断。
+
+```bash
+# 交互式：逐份材料回答三个问题
+python -m agents run --src examples/case_pass/raw --workspace ../agent_demo/pass
+
+# 非交互式：跑通“申报 → 挂起 → 退回申报 Agent”
+python -m agents run \
+    --src examples/case_pending/raw \
+    --workspace ../agent_demo/pending \
+    --answers examples/agent/pending_answers.yaml
+
+# 闸门挂起后，在同一个工作区提交第二轮
+python -m agents revise \
+    --workspace ../agent_demo/pending \
+    --answers ../path/to/revised_answers.yaml
+```
+
+这两个 Agent 使用确定性工具，不需要训练模型。每次运行的共享状态、消息和工具调用分别保存在
+`agent_state.json`、`agent_messages.jsonl`、`agent_tools.jsonl`。`pending` 后使用 `revise`
+进入下一轮，每轮清单与闸门结果分别保存在 `round-N/`，历史不会被覆盖。角色边界、状态机和扩展方式见
+[`docs/multi_agent.md`](docs/multi_agent.md)。
+
+当前版本覆盖“材料申报到入库闸”这一段。闸门批准后，继续调用 `run_guarded.py`、`seal` 和
+`audit` 仍沿用原有受控流程。
+
+---
+
 ## 快速开始
 
 需要 Python 3.9+ 与 PyYAML：

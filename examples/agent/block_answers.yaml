@@ -1,0 +1,12 @@
+M01:
+  author: self
+  third_party: no
+  nature: process
+M02:
+  author: self
+  third_party: no
+  nature: private
+M03:
+  author: mixed
+  third_party: yes
+  nature: process
