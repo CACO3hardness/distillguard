@@ -1,4 +1,4 @@
-"""Command-line entry point for the two-agent DistillGuard flow."""
+"""Command-line entry point for DistillGuard agents."""
 
 from __future__ import annotations
 

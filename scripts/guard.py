@@ -3,9 +3,9 @@
 """DistillGuard：在人格提取之前判断什么材料可以进入蒸馏流程。
 
 三个子命令：
-    gate   入库闸——按三层边界分类，产出 approved/ 与 blocked.json
-    seal   出厂闸——检查有效期、退出通道，生成成分表与审计记录
-    audit  出包核查——检查被拦截的材料是否混进了产出包
+    gate   入库闸：按三层边界分类，产出 approved/ 与 blocked.json
+    seal   出厂闸：检查有效期、退出通道，生成成分表与审计记录
+    audit  出包核查：检查被拦截的材料是否混进了产出包
 """
 
 from __future__ import annotations
@@ -466,9 +466,9 @@ def cmd_gate(args) -> int:
           f"挂起 {len(pending)}，拦截 {len(blocked)}")
     for r in blocked:
         reason = "；".join(f["label"] for f in r["flags"]) or r["tier_label"]
-        print(f"  [拦截] {r['id']} {r['path']} —— {reason}")
+        print(f"  [拦截] {r['id']} {r['path']}：{reason}")
     for r in pending:
-        print(f"  [挂起] {r['id']} {r['path']} —— 缺：{'、'.join(r['gaps'])}")
+        print(f"  [挂起] {r['id']} {r['path']}：缺 {'、'.join(r['gaps'])}")
     print(f"产出：{out / '合规记录.md'}")
     if candidates:
         print(f"候选人名 {len(candidates)} 个，见：{out / 'watchlist_candidates.txt'}")
@@ -561,7 +561,7 @@ def cmd_seal(args) -> int:
     if pending:
         print("出厂闸：仍有挂起材料，不予出厂。")
         for m in pending:
-            print(f"  [挂起] {m['id']} {m['path']} —— {'、'.join(m['gaps'])}")
+            print(f"  [挂起] {m['id']} {m['path']}：{'、'.join(m['gaps'])}")
         return 3
 
     if not approved:

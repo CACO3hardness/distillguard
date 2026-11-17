@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>DistillGuard 的三 Agent 协作</title>
+  <style>
+    body { margin: 0; background: #fff; }
+    svg { display: block; width: 1280px; height: 520px; }
+  </style>
+</head>
+<body>
+<svg id="agent-collaboration-root" xmlns="http://www.w3.org/2000/svg"
+     width="1280" height="520" viewBox="0 0 1280 520"
+     role="img" aria-labelledby="agent-collaboration-title agent-collaboration-desc"
+     font-family="'Microsoft YaHei','Noto Sans SC','PingFang SC',sans-serif">
+  <title id="agent-collaboration-title">DistillGuard 的三 Agent 协作</title>
+  <desc id="agent-collaboration-desc">协调器连接申报、闸门和审计员三个 Agent；挂起项退回申报，批准后进入审计，违规时返工复审。</desc>
+  <defs>
+    <marker id="agent-collaboration-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#17365D"/>
+    </marker>
+    <marker id="agent-collaboration-arrow-loop" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#2E75B6"/>
+    </marker>
+    <marker id="agent-collaboration-arrow-red" markerWidth="6" markerHeight="6" refX="5" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 6 3 L 0 6 Z" fill="#C0504D"/>
+    </marker>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="216" y1="82" x2="216" y2="105" stroke="#17365D" stroke-width="3"
+          marker-end="url(#agent-collaboration-arrow)"/>
+    <line x1="640" y1="82" x2="640" y2="105" stroke="#17365D" stroke-width="3"
+          marker-end="url(#agent-collaboration-arrow)"/>
+    <line x1="1064" y1="82" x2="1064" y2="105" stroke="#17365D" stroke-width="3"
+          marker-end="url(#agent-collaboration-arrow)"/>
+    <line x1="376" y1="210" x2="480" y2="210" stroke="#17365D" stroke-width="4"
+          marker-end="url(#agent-collaboration-arrow)"/>
+    <line x1="800" y1="210" x2="904" y2="210" stroke="#17365D" stroke-width="4"
+          marker-end="url(#agent-collaboration-arrow)"/>
+    <path d="M 640 310 V 356 H 216 V 310"
+          stroke="#2E75B6" stroke-width="4" stroke-dasharray="10 8"
+          marker-end="url(#agent-collaboration-arrow-loop)"/>
+    <path d="M 720 310 V 375"
+          stroke="#C0504D" stroke-width="3" stroke-dasharray="8 7"
+          marker-end="url(#agent-collaboration-arrow-red)"/>
+  </g>
+
+  <!-- Coordinator -->
+  <rect x="56" y="28" width="1168" height="54" rx="8" fill="#EDF2F7" stroke="#AAB7C4" stroke-width="2"/>
+  <text x="640" y="62" text-anchor="middle" font-size="22" font-weight="700" fill="#17365D">
+    协调器：只转交任务、挂起项与结果，不作材料判断
+  </text>
+
+  <!-- Declaration agent -->
+  <rect x="56" y="105" width="320" height="205" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <rect x="80" y="124" width="92" height="28" rx="4" fill="#DCE9F5"/>
+  <text x="126" y="144" text-anchor="middle" font-size="15" font-weight="700" fill="#17365D">AGENT 01</text>
+  <text x="216" y="181" text-anchor="middle" font-size="24" font-weight="700" fill="#17365D">申报 Agent</text>
+  <text x="216" y="217" text-anchor="middle" font-size="17" fill="#334E68">扫描材料 · 三项提问</text>
+  <text x="216" y="245" text-anchor="middle" font-size="17" fill="#334E68">生成 materials.yaml</text>
+  <text x="216" y="272" text-anchor="middle" font-size="16" fill="#5E6B78">不能放行，只能收齐事实</text>
+  <text x="216" y="296" text-anchor="middle" font-size="14" fill="#2E75B6">pending → 下一轮补充</text>
+
+  <!-- Gate agent -->
+  <rect x="480" y="105" width="320" height="205" rx="10" fill="#FFF8F0" stroke="#C87835" stroke-width="3"/>
+  <rect x="504" y="124" width="92" height="28" rx="4" fill="#F5DFC8"/>
+  <text x="550" y="144" text-anchor="middle" font-size="15" font-weight="700" fill="#9A561E">AGENT 02</text>
+  <text x="640" y="181" text-anchor="middle" font-size="24" font-weight="700" fill="#17365D">闸门 Agent</text>
+  <text x="640" y="217" text-anchor="middle" font-size="17" fill="#334E68">五项同意 · 第三人 · 层级</text>
+  <text x="640" y="245" text-anchor="middle" font-size="17" fill="#334E68">调用确定性 guard.py gate</text>
+  <text x="640" y="272" text-anchor="middle" font-size="16" fill="#5E6B78">不替用户补事实，不改变结论</text>
+  <text x="640" y="296" text-anchor="middle" font-size="14" fill="#9A561E">approved / pending / blocked</text>
+
+  <!-- Audit agent -->
+  <rect x="904" y="105" width="320" height="205" rx="10" fill="#F7F9FC" stroke="#AAB7C4" stroke-width="2"/>
+  <rect x="928" y="124" width="92" height="28" rx="4" fill="#DCE9F5"/>
+  <text x="974" y="144" text-anchor="middle" font-size="15" font-weight="700" fill="#17365D">AGENT 03</text>
+  <text x="1064" y="181" text-anchor="middle" font-size="24" font-weight="700" fill="#17365D">审计员 Agent</text>
+  <text x="1064" y="217" text-anchor="middle" font-size="17" fill="#334E68">封条 · 成分表 · 调用记录</text>
+  <text x="1064" y="245" text-anchor="middle" font-size="17" fill="#334E68">混入 · 超期 · 改写核查</text>
+  <text x="1064" y="272" text-anchor="middle" font-size="16" fill="#5E6B78">不改包，不删证据</text>
+  <text x="1064" y="296" text-anchor="middle" font-size="14" fill="#35633F">audit_passed / audit_violation</text>
+
+  <text x="420" y="338" text-anchor="middle" font-size="15" fill="#2E75B6">pending 退回申报 Agent</text>
+  <rect x="650" y="350" width="140" height="40" rx="7" fill="#F8E5E3" stroke="#C0504D" stroke-width="2"/>
+  <text x="720" y="376" text-anchor="middle" font-size="15" font-weight="700" fill="#9B3633">blocked：停止</text>
+
+  <rect x="56" y="452" width="1168" height="36" rx="6" fill="#EDF2F7"/>
+  <text x="640" y="476" text-anchor="middle" font-size="15" fill="#17365D">
+    agent_state.json · agent_messages.jsonl · agent_tools.jsonl · round-N 历史
+  </text>
+</svg>
+</body>
+</html>

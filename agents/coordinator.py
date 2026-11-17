@@ -12,7 +12,7 @@ from .runtime import SharedWorkspace
 
 
 class MultiAgentCoordinator:
-    """Route messages while leaving material decisions to the specialist agents."""
+    """Routes tasks and results between specialist agents."""
 
     def __init__(self, workspace: Path | str, src: Path | str):
         self.workspace = SharedWorkspace(workspace)

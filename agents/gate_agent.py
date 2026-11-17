@@ -24,7 +24,7 @@ class GateResult:
 
 
 class GateAgent:
-    """Owns gate execution and remediation messages, never overrides rules."""
+    """Gate execution and result interpretation."""
 
     name = "gate_agent"
 

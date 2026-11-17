@@ -1,4 +1,4 @@
-"""Rule-backed multi-agent orchestration for DistillGuard."""
+"""DistillGuard multi-agent components."""
 
 from .coordinator import MultiAgentCoordinator
 from .audit_agent import AuditAgent

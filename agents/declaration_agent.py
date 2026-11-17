@@ -27,11 +27,7 @@ class ManifestResult:
 
 
 class DeclarationAgent:
-    """Owns only material intake and manifest construction.
-
-    It cannot approve or block a material. Once the manifest is complete it
-    hands control to the gate agent.
-    """
+    """Material intake and manifest construction."""
 
     name = "declaration_agent"
 

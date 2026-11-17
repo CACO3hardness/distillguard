@@ -24,9 +24,9 @@
 
 ---
 
-## 核心设计：闸门不是提醒，是物理入口
+## 核心设计：用目录边界执行闸门
 
-一个 skill 没法拦截另一个 skill 读文件。所以本工具不靠"提醒模型注意"，而是改变输入结构：
+一个 skill 无法拦截另一个 skill 读取文件。DistillGuard 因此改变下游可见的目录结构：
 
 ```
 raw/  ──[gate]──>  approved/   ──>  蒸馏工具只读这里
@@ -34,8 +34,8 @@ raw/  ──[gate]──>  approved/   ──>  蒸馏工具只读这里
                      └──> blocked.json（每条被拦下的材料与理由）
 ```
 
-被拦下的材料**不会出现在 approved/ 里**，因此不可能被蒸馏读进去。合规不是一句承诺，
-而是 `blocked.json` 里可以逐条核查的事实。
+被拦下的材料不会出现在 `approved/` 里，因此不会被蒸馏工具读到。拦截结果同时写入
+`blocked.json`，可以按材料逐条核查。
 
 ---
 
@@ -300,15 +300,15 @@ materials:
 
 ### 方式二：agent / skill → 交接包
 
-蒸馏由 Claude、Codex 这类 agent 按 SKILL.md 流程执行时：
+蒸馏由 agent 按 SKILL.md 流程执行时：
 
 ```bash
 python scripts/handoff.py --run run --out handoff --tool "你的工具名"
 ```
 
 产出 `handoff/materials/`、`CONTRACT.md`、`POLICY.yaml`、`materials.json`。
-把整个 `handoff/` 交给 agent，告诉它材料只在 `materials/`，按 `CONTRACT.md` 执行。
-它读不到原始目录，不是因为它自觉，而是因为原始目录根本没交给它。
+把整个 `handoff/` 交给 agent，并告知材料只位于 `materials/`、执行规则见 `CONTRACT.md`。
+原始目录不在交接包内，下游进程没有读取入口。
 
 ### 方式三：已有工具 → 写一个二十行的适配层
 
@@ -347,7 +347,7 @@ python scripts/run_guarded.py ... -- python examples/probe_raw.py
 # 原始目录已恢复：raw.locked-20261114-153628 -> raw
 ```
 
-不加锁时同一个探针会读到 2 个文件并退出 10，wrapper 随即停止——这就是"提醒"和"约束"的区别。
+不加锁时同一个探针会读到 2 个文件并退出 10，wrapper 随即停止。
 
 要注意：同一个用户账号下，任何程序都能读这个用户能读的文件。锁只是让路径暂时消失，不是权限隔离；
 真正隔离要用容器，只挂载 `approved/`。

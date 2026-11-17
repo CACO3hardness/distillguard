@@ -35,11 +35,7 @@ class AuditResult:
 
 
 class AuditAgent:
-    """Runs deterministic seal/audit commands and reports the evidence.
-
-    The agent may explain or recommend rework, but it never edits package
-    contents and cannot turn a failed audit into a pass.
-    """
+    """Runs seal and audit commands without modifying package contents."""
 
     name = "audit_agent"
 

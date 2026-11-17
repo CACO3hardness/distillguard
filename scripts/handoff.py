@@ -9,7 +9,7 @@
         POLICY.yaml       机器可读的授权范围与义务
         CONTRACT.md       给下游工具/agent 的契约文本
 
-不绑定具体工具：命令行工具、Claude/Codex skill、自建脚本都能接。
+不绑定具体工具：命令行工具、agent skill、自建脚本都能接。
 """
 
 from __future__ import annotations
